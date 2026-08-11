@@ -11,10 +11,6 @@ import com.sefa.snapshot.model.ChangeType;
 import com.sefa.snapshot.model.FileChange;
 
 public class SnapshotComparator {
-    
-    public  SnapshotComparator(){
-
-    }
 
     public List<FileChange> compare(Map<String, String> oldFiles, Map<String, String> currentFiles){
         List<FileChange> changes = new ArrayList<>();
@@ -31,25 +27,18 @@ public class SnapshotComparator {
             else if(!oldFiles.containsKey(file) && currentFiles.containsKey(file)){
                 changeType = ChangeType.ADDED;
             }
-            else{
-                if(Objects.equals(oldFiles.get(file) , currentFiles.get(file))){
-                    changeType = ChangeType.UNCHANGED;
-                }
-                else{
-                    changeType = ChangeType.MODIFIED;
-                }
+            else if(Objects.equals(oldFiles.get(file) , currentFiles.get(file))){
+                changeType = ChangeType.UNCHANGED;
             }
+            else{
+                changeType = ChangeType.MODIFIED;
+            }
+            
             FileChange change = new FileChange(file, changeType);
             changes.add(change);
         }
 
         return changes;
     }
-    public void displayChanges(List<FileChange> changes){
-        System.out.println("------------------------------------------------------");
-        for (FileChange change : changes) {
-            System.out.println(change.getPath() + " -> "+ change.getChangeType());
-        }
-        System.out.println("------------------------------------------------------");
-    }
+    
 }
