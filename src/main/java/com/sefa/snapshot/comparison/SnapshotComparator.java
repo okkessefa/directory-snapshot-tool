@@ -9,10 +9,11 @@ import java.util.Set;
 
 import com.sefa.snapshot.model.ChangeType;
 import com.sefa.snapshot.model.FileChange;
+import com.sefa.snapshot.model.FileMetadata;
 
 public class SnapshotComparator {
 
-    public List<FileChange> compare(Map<String, String> oldFiles, Map<String, String> currentFiles){
+    public List<FileChange> compare(Map<String, FileMetadata> oldFiles, Map<String, FileMetadata> currentFiles){
         List<FileChange> changes = new ArrayList<>();
         Set<String> allFiles = new HashSet<>();
 
@@ -21,21 +22,22 @@ public class SnapshotComparator {
 
         for (String file : allFiles) {
             ChangeType changeType;
+            FileMetadata oldMetaData = oldFiles.get(file);
+            FileMetadata currenMetadata = currentFiles.get(file);
             if(oldFiles.containsKey(file) && !currentFiles.containsKey(file)){
                 changeType = ChangeType.DELETED;
             }
             else if(!oldFiles.containsKey(file) && currentFiles.containsKey(file)){
                 changeType = ChangeType.ADDED;
             }
-            else if(Objects.equals(oldFiles.get(file) , currentFiles.get(file))){
-                changeType = ChangeType.UNCHANGED;
-            }
-            else{
+            else if(!Objects.equals(oldMetaData.getHash() , currenMetadata.getHash())){
                 changeType = ChangeType.MODIFIED;
             }
+            else{
+                changeType = ChangeType.UNCHANGED;
+            }
             
-            FileChange change = new FileChange(file, changeType);
-            changes.add(change);
+            changes.add(new FileChange(file, changeType));
         }
 
         return changes;

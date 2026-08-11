@@ -6,20 +6,41 @@ import java.util.List;
 
 import com.sefa.snapshot.comparison.SnapshotComparator;
 import com.sefa.snapshot.model.FileChange;
+import com.sefa.snapshot.model.FileMetadata;
 
 public class Main {
     public static void main(String[] args) {
-        Map<String, String> oldFiles = new HashMap<>();
-        Map<String, String> currentFiles = new HashMap<>();
+        Map<String, FileMetadata> oldFiles = new HashMap<>();
+        Map<String, FileMetadata> currentFiles = new HashMap<>();
 
-        oldFiles.put("A.txt", "111");
-        oldFiles.put("B.txt", "222");
-        oldFiles.put("C.txt", "333");
+        oldFiles.put(
+            "A.txt",
+            new FileMetadata("A.txt", 121, "111")
+        );
+        oldFiles.put(
+            "B.txt",
+            new FileMetadata("B.txt", 239, "222")
+        );
+        oldFiles.put(
+            "C.txt",
+            new FileMetadata("C.txt", 100, "333")
+        );
+
+        currentFiles.put(
+            "A.txt",
+            new FileMetadata("A.txt", 121, "111")
+        );
+        currentFiles.put(
+            "B.txt",
+            new FileMetadata("B.txt", 245, "999")
+        );
+        currentFiles.put(
+            "D.txt",
+            new FileMetadata("D.txt", 167, "555")
+        );
         
-        currentFiles.put("A.txt", "111");
-        currentFiles.put("B.txt", "999");
-        currentFiles.put("D.txt", "444");
-
+        
+       
         SnapshotComparator comparator = new SnapshotComparator();
 
         List<FileChange> changes = comparator.compare(oldFiles, currentFiles);
