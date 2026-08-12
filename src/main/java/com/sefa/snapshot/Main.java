@@ -18,53 +18,38 @@ import com.sefa.snapshot.scanner.DirectoryScanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-
-        DirectoryScanner scanner = new DirectoryScanner();
-
-        // Map<String, FileMetadata> oldResult = scanner.scan(Path.of("scanner-test"));
-        
-        // System.out.println("First scan finished");
-        // System.out.println("Modify the files, then press the Enter. ");
-
-        // System.in.read();
-        
-        // Map<String, FileMetadata> currentResult = scanner.scan(Path.of("scanner-test"));
-
-        // SnapshotComparator comparator = new SnapshotComparator();
-
-        // List<FileChange> changes = comparator.compare(oldResult, currentResult);
-
-        // for (FileChange change : changes) {
-        //     System.out.println(
-        //         change.getPath() + " -> " + change.getChangeType()
-        //     );
-        // }
-
-        Map<String, FileMetadata> files = scanner.scan(Path.of("scanner-test"));
-
-        Snapshot snapshot = new Snapshot(LocalDateTime.now(), files);
-
-        SnapshotRepository snapshotRepository = new SnapshotRepository();
-
-        snapshotRepository.save(snapshot, Path.of("snapshot.json"));
-        Snapshot loaded = snapshotRepository.load(Path.of("snapshot.json"));
-
-        System.out.println(loaded.getCreatedAt());
-
-        for(FileMetadata metadata : loaded.getFiles().values()){
-            System.out.println(
-                metadata.getPath() 
-                + " | "
-                + metadata.getSize() 
-                + " | " 
-                + metadata.getHash()
-            );
+        if(args.length < 2){
+            System.out.println("Usage: snapshot <directory> | compare <directory>");
+            return;
         }
-
-        // result.forEach((key, value) -> 
-        //     System.out.println(value.getPath() + "\nSize: " + value.getSize() + "\nHash: " + value.getHash())
-        // );
+        String command = args[0];
+        Path directory = Path.of(args[1]);
+        
+        if(command.equals("snapshot")){
+            System.out.println("Snapshot command selected");
+            DirectoryScanner scanner = new DirectoryScanner();
+            Map<String, FileMetadata> files = scanner.scan(directory);
+            Snapshot snapshot = new Snapshot(LocalDateTime.now(), files);
+            SnapshotRepository snapshotRepository = new SnapshotRepository();
+            snapshotRepository.save(snapshot, Path.of("snapshot.json"));
+        }else if(command.equals("compare")){
+            System.out.println("Compare command selected");
+            SnapshotRepository snapshotRepository = new SnapshotRepository();
+            Snapshot oldSnapshot = snapshotRepository.load(Path.of("snapshot.json"));
+            Map<String, FileMetadata> oldFiles = oldSnapshot.getFiles();
+            DirectoryScanner scanner = new DirectoryScanner();
+            Map<String, FileMetadata> currentFiles = scanner.scan(directory);
+            SnapshotComparator comparator = new SnapshotComparator();
+            List<FileChange> changes = comparator.compare(oldFiles, currentFiles);
+            for (FileChange change : changes) {
+                System.out.println(
+                    change.getPath() 
+                    + " -> "
+                    + change.getChangeType()
+                );
+            }
+        }else{ 
+            System.out.println( "Unknown command: "+command);
+        }
     }
 }
-// 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-// 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969
