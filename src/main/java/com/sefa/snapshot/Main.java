@@ -15,25 +15,31 @@ import com.sefa.snapshot.scanner.DirectoryScanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // FileHasher hasher = new FileHasher();
-        // Path path = Path.of("sample.txt");
-        // long size = Files.size(path);
-        // String hash = hasher.hash(path);
-
-        // FileMetadata metadata = new FileMetadata(path.toString(), size, hash);
-
-        // System.out.println("Path: "+ metadata.getPath());
-        // System.out.println("Size: "+ metadata.getSize());
-        // System.out.println("Hash: "+ metadata.getHash());
 
         DirectoryScanner scanner = new DirectoryScanner();
-        // scanner.scan(Path.of("scanner-test"));
 
-        Map<String, FileMetadata> result = scanner.scan(Path.of("scanner-test"));
+        Map<String, FileMetadata> oldResult = scanner.scan(Path.of("scanner-test"));
+        
+        System.out.println("First scan finished");
+        System.out.println("Modify the files, then press the Enter. ");
 
-        result.forEach((key, value) -> 
-            System.out.println(value.getPath() + "\nSize: " + value.getSize() + "\nHash: " + value.getHash())
-        );
+        System.in.read();
+        
+        Map<String, FileMetadata> currentResult = scanner.scan(Path.of("scanner-test"));
+
+        SnapshotComparator comparator = new SnapshotComparator();
+
+        List<FileChange> changes = comparator.compare(oldResult, currentResult);
+
+        for (FileChange change : changes) {
+            System.out.println(
+                change.getPath() + " -> " + change.getChangeType()
+            );
+        }
+
+        // result.forEach((key, value) -> 
+        //     System.out.println(value.getPath() + "\nSize: " + value.getSize() + "\nHash: " + value.getHash())
+        // );
     }
 }
 // 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
