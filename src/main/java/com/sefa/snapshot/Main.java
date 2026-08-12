@@ -14,6 +14,7 @@ import com.sefa.snapshot.model.FileChange;
 import com.sefa.snapshot.model.FileMetadata;
 import com.sefa.snapshot.model.Snapshot;
 import com.sefa.snapshot.persistence.SnapshotRepository;
+import com.sefa.snapshot.report.ConsoleReporter;
 import com.sefa.snapshot.scanner.DirectoryScanner;
 
 public class Main {
@@ -41,13 +42,8 @@ public class Main {
             Map<String, FileMetadata> currentFiles = scanner.scan(directory);
             SnapshotComparator comparator = new SnapshotComparator();
             List<FileChange> changes = comparator.compare(oldFiles, currentFiles);
-            for (FileChange change : changes) {
-                System.out.println(
-                    change.getPath() 
-                    + " -> "
-                    + change.getChangeType()
-                );
-            }
+            ConsoleReporter reporter = new ConsoleReporter();
+            reporter.print(changes);
         }else{ 
             System.out.println( "Unknown command: "+command);
         }
