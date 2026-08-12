@@ -1,11 +1,19 @@
 package com.sefa.snapshot.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FileMetadata {
     private final String path;
     private final long size;
     private final String hash;
 
-    public FileMetadata(String path, long size ,String hash){
+    @JsonCreator
+    public FileMetadata(
+        @JsonProperty("path") String path, 
+        @JsonProperty("size") long size,
+        @JsonProperty("hash") String hash
+    ){
         this.path = path;
         this.size = size;
         this.hash = hash;

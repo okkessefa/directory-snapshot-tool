@@ -1,16 +1,19 @@
 package com.sefa.snapshot;
 
-import java.nio.file.Files;
+// import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.time.LocalDateTime;
+// import java.util.HashMap;
+// import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
 import com.sefa.snapshot.comparison.SnapshotComparator;
-import com.sefa.snapshot.hashing.FileHasher;
+// import com.sefa.snapshot.hashing.FileHasher;
 import com.sefa.snapshot.model.FileChange;
 import com.sefa.snapshot.model.FileMetadata;
+import com.sefa.snapshot.model.Snapshot;
+import com.sefa.snapshot.persistence.SnapshotRepository;
 import com.sefa.snapshot.scanner.DirectoryScanner;
 
 public class Main {
@@ -18,22 +21,43 @@ public class Main {
 
         DirectoryScanner scanner = new DirectoryScanner();
 
-        Map<String, FileMetadata> oldResult = scanner.scan(Path.of("scanner-test"));
+        // Map<String, FileMetadata> oldResult = scanner.scan(Path.of("scanner-test"));
         
-        System.out.println("First scan finished");
-        System.out.println("Modify the files, then press the Enter. ");
+        // System.out.println("First scan finished");
+        // System.out.println("Modify the files, then press the Enter. ");
 
-        System.in.read();
+        // System.in.read();
         
-        Map<String, FileMetadata> currentResult = scanner.scan(Path.of("scanner-test"));
+        // Map<String, FileMetadata> currentResult = scanner.scan(Path.of("scanner-test"));
 
-        SnapshotComparator comparator = new SnapshotComparator();
+        // SnapshotComparator comparator = new SnapshotComparator();
 
-        List<FileChange> changes = comparator.compare(oldResult, currentResult);
+        // List<FileChange> changes = comparator.compare(oldResult, currentResult);
 
-        for (FileChange change : changes) {
+        // for (FileChange change : changes) {
+        //     System.out.println(
+        //         change.getPath() + " -> " + change.getChangeType()
+        //     );
+        // }
+
+        Map<String, FileMetadata> files = scanner.scan(Path.of("scanner-test"));
+
+        Snapshot snapshot = new Snapshot(LocalDateTime.now(), files);
+
+        SnapshotRepository snapshotRepository = new SnapshotRepository();
+
+        snapshotRepository.save(snapshot, Path.of("snapshot.json"));
+        Snapshot loaded = snapshotRepository.load(Path.of("snapshot.json"));
+
+        System.out.println(loaded.getCreatedAt());
+
+        for(FileMetadata metadata : loaded.getFiles().values()){
             System.out.println(
-                change.getPath() + " -> " + change.getChangeType()
+                metadata.getPath() 
+                + " | "
+                + metadata.getSize() 
+                + " | " 
+                + metadata.getHash()
             );
         }
 
