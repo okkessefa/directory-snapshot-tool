@@ -1,7 +1,9 @@
 package com.sefa.snapshot;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
@@ -9,54 +11,29 @@ import com.sefa.snapshot.comparison.SnapshotComparator;
 import com.sefa.snapshot.hashing.FileHasher;
 import com.sefa.snapshot.model.FileChange;
 import com.sefa.snapshot.model.FileMetadata;
+import com.sefa.snapshot.scanner.DirectoryScanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // Map<String, FileMetadata> oldFiles = new HashMap<>();
-        // Map<String, FileMetadata> currentFiles = new HashMap<>();
+        // FileHasher hasher = new FileHasher();
+        // Path path = Path.of("sample.txt");
+        // long size = Files.size(path);
+        // String hash = hasher.hash(path);
 
-        // oldFiles.put(
-        //     "A.txt",
-        //     new FileMetadata("A.txt", 121, "111")
-        // );
-        // oldFiles.put(
-        //     "B.txt",
-        //     new FileMetadata("B.txt", 239, "222")
-        // );
-        // oldFiles.put(
-        //     "C.txt",
-        //     new FileMetadata("C.txt", 100, "333")
-        // );
+        // FileMetadata metadata = new FileMetadata(path.toString(), size, hash);
 
-        // currentFiles.put(
-        //     "A.txt",
-        //     new FileMetadata("A.txt", 121, "111")
-        // );
-        // currentFiles.put(
-        //     "B.txt",
-        //     new FileMetadata("B.txt", 245, "999")
-        // );
-        // currentFiles.put(
-        //     "D.txt",
-        //     new FileMetadata("D.txt", 167, "555")
-        // );
-        
-        
-       
-        // SnapshotComparator comparator = new SnapshotComparator();
+        // System.out.println("Path: "+ metadata.getPath());
+        // System.out.println("Size: "+ metadata.getSize());
+        // System.out.println("Hash: "+ metadata.getHash());
 
-        // List<FileChange> changes = comparator.compare(oldFiles, currentFiles);
+        DirectoryScanner scanner = new DirectoryScanner();
+        // scanner.scan(Path.of("scanner-test"));
 
-        // System.out.println("------------------------------------------------------");
-        // for (FileChange change : changes) {
-        //     System.out.println(change.getPath() + " -> "+ change.getChangeType());
-        // }
-        System.out.println("------------------------------------------------------");
+        Map<String, FileMetadata> result = scanner.scan(Path.of("scanner-test"));
 
-        Path path = Path.of("sample.txt");
-        FileHasher hasher = new FileHasher();
-        String hash = hasher.hash(path);
-        System.out.println("Hash -> " + hash);
+        result.forEach((key, value) -> 
+            System.out.println(value.getPath() + "\nSize: " + value.getSize() + "\nHash: " + value.getHash())
+        );
     }
 }
 // 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
