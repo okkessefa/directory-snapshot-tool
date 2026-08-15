@@ -1,4 +1,4 @@
-package com.sefa.snapshot.persistance;
+package com.sefa.snapshot.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.sefa.snapshot.model.FileMetadata;
 import com.sefa.snapshot.model.Snapshot;
-import com.sefa.snapshot.persistence.SnapshotRepository;
 
 public class SnapshotRepositoryTest {
     
