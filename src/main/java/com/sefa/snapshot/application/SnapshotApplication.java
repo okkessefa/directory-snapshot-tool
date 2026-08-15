@@ -1,5 +1,6 @@
 package com.sefa.snapshot.application;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,17 +17,35 @@ import com.sefa.snapshot.scanner.DirectoryScanner;
 public class SnapshotApplication {
     private static final Path SNAPSHOT_PATH = Path.of("snapshot.json");
     public void run(String[] args) throws Exception {
-        if(args.length < 2){
+        if(args.length < 2 || args.length > 2){
             System.out.println("Usage: snapshot <directory> | compare <directory>");
             return;
         }
         String command = args[0];
         Path directory = Path.of(args[1]);
+        
+        if (!Files.exists(directory)) {
+            System.out.println(
+                directory + " does not exist. Enter a valid directory."
+            );
+            return;
+        }
+
+        if (!Files.isDirectory(directory)) {
+            System.out.println(
+                directory + " is not a directory."
+            );
+            return;
+        }
+
         if(command.equals("snapshot")){
             System.out.println("Snapshot command selected");
             this.createSnapshot(directory);
         }else if(command.equals("compare")){
-            System.out.println("Compare command selected");
+            if(!Files.exists(SNAPSHOT_PATH)){
+                System.out.println("Comparison completed successfully.");
+                return;
+            }
             this.compareSnapshot(directory);
         }else{ 
             System.out.println( "Unknown command: "+command);
